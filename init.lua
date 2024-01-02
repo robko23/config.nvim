@@ -15,7 +15,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 function Get_reg(char)
-	return vim.api.nvim_exec([[echo getreg(']]..char..[[')]], true):gsub("[\n\r]", "^J")
+	return vim.api.nvim_exec([[echo getreg(']] .. char .. [[')]], true):gsub("[\n\r]", "^J")
 end
 
 require("lazy").setup({
@@ -42,7 +42,7 @@ require("lazy").setup({
 				section_separators = '',
 			},
 			sections = {
-				lualine_c = {'Get_reg("%")'}
+				lualine_c = { 'Get_reg("%")' }
 			}
 		},
 	},
@@ -55,6 +55,31 @@ require("lazy").setup({
 		'numToStr/Comment.nvim',
 		opts = {
 		}
+	},
+
+	{
+		"folke/trouble.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		lazy = true,
+		opts = {
+			-- your configuration comes here
+			-- or leave it empty to use the default settings
+			-- refer to the configuration section below
+		},
+	},
+
+	{
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		---@type Flash.Config
+		opts = {
+			modes = {
+				char = {
+					jump_labels = true
+				}
+			}
+		},
+		-- stylua: ignore
 	},
 
 	{
@@ -189,7 +214,7 @@ require("lazy").setup({
 			{
 				'nvim-telescope/telescope-fzf-native.nvim',
 				build = 'make',
-			},	
+			},
 		},
 	},
 
@@ -198,7 +223,7 @@ require("lazy").setup({
 		dependencies = {
 			'nvim-telescope/telescope.nvim'
 		},
-		config = function (self, opts)
+		config = function(self, opts)
 			-- To get ui-select loaded and working with telescope, you need to call
 			-- load_extension, somewhere after setup function:
 			require("telescope").load_extension("ui-select")
@@ -214,9 +239,14 @@ require("lazy").setup({
 	},
 
 	{
-		"preservim/nerdtree",
-		lazy = true,
-	},
+		"b0o/schemastore.nvim",
+		lazy = true
+	}
+
+	-- {
+	-- 	"preservim/nerdtree",
+	-- 	lazy = true,
+	-- },
 
 	-- {
 	-- 	"simrat39/rust-tools.nvim",
@@ -326,11 +356,11 @@ local on_attach = function(_, bufnr)
 	nmap("]d", diag(true), "Next diagnostic")
 	nmap("[d", diag(false), "Prev diagnostic")
 
-	nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+	nmap('<leader>cr', vim.lsp.buf.rename, '[C]ode [R]ename')
 	nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 	map("v", "<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
 	nmap('<leader>cf', vim.lsp.buf.format, '[C]ode [F]ormat')
-	vim.keymap.set('n', "=", function ()
+	vim.keymap.set('n', "=", function()
 		vim.lsp.buf.format()
 	end, {})
 
@@ -432,7 +462,27 @@ local servers = {
 			-- diagnostics = { disable = { 'missing-fields' } },
 		},
 	},
-	taplo = {}
+	taplo = {},
+	jsonls = {
+		json = {
+			schemas = require('schemastore').json.schemas(),
+			validate = { enable = true },
+		},
+	},
+	yamlls = {
+		yaml = {
+			schemaStore = {
+				-- You must disable built-in schemaStore support if you want to use
+				-- this plugin and its advanced options like `ignore`.
+				enable = false,
+				-- Avoid TypeError: Cannot read properties of undefined (reading 'length')
+				url = "",
+			},
+			schemas = require('schemastore').yaml.schemas(),
+		},
+	},
+	dockerls = {},
+	docker_compose_language_service = {},
 }
 
 -- Setup neovim lua configuration
@@ -522,6 +572,7 @@ cmp.setup {
 		{ name = 'luasnip' },
 		{ name = "crates" },
 		{ name = 'path' },
+		{ name = "hadolint" }
 	},
 }
 
@@ -542,7 +593,8 @@ local function setup_which_key()
 	local wk = require("which-key")
 	wk.register({
 		['<leader>f'] = { '[F]ind ...' },
-		['<leader>c'] = { '[C]ind ...' },
+		['<leader>c'] = { '[C]ode ...' },
+		['<leader>d'] = { '[D]iagnostic ...' },
 	}, { mode = 'n' })
 end
 
@@ -550,13 +602,26 @@ setup_telescope()
 setup_which_key()
 
 vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, { desc = "Undo tree" })
-vim.keymap.set("n", "<M-1>", function()
-	print("Hello")
-end)
+-- vim.keymap.set("n", "<M-1>", function()
+-- 	print("Hello")
+-- end)
+
+vim.keymap.set("n", "<leader>dd", function()
+	require("trouble").open()
+end, { desc = "[D]iagnostics in [d]ocument" })
+
+vim.keymap.set("n", "<leader>dw", function()
+	require("trouble").open("workspace_diagnostics")
+end, { desc = "[D]iagnostics in [w]orkspace" })
+
+vim.keymap.set({ "n", "x", "o" }, "s", function()
+	require("flash").jump()
+end, { desc = "Flash" })
 
 vim.opt.tabstop = 4
-vim.opt.shiftround = true
+vim.opt.shiftround = false
 vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
 vim.opt.expandtab = false
 
 vim.opt.wrap = false
