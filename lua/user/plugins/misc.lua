@@ -10,6 +10,8 @@ return {
 				['<leader>f'] = { '[F]ind ...' },
 				['<leader>c'] = { '[C]ode ...' },
 				['<leader>d'] = { '[D]iagnostic ...' },
+				['<leader>t'] = { '[T]odo ...' },
+				['<leader>g'] = { '[G]it ...' },
 			}, { mode = 'n' })
 		end
 	},
@@ -54,13 +56,20 @@ return {
 
 	{
 		"folke/todo-comments.nvim",
-		event = "VeryLazy",
+		event = "BufRead",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		opts = {
 			-- your configuration comes here
 			-- or leave it empty to use the default settings
 			-- refer to the configuration section below
-		}
+		},
+		config = function(self, opts)
+			require("todo-comments").setup(opts)
+
+			vim.keymap.set('n', "<leader>tt", function()
+				vim.cmd("TodoTelescope")
+			end, { desc = "[T]odo [T]elescope" })
+		end
 	},
 
 	{

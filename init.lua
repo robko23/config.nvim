@@ -22,6 +22,12 @@ require("lazy").setup({
 	{ import = "user.plugins.treesitter" },
 	{ import = "user.plugins.telescope" },
 	{ import = "user.plugins.lspconfig" },
+	{ import = "user.plugins.flash" },
+	{ import = "user.plugins.gitsigns" }
+}, {
+	change_detection = {
+		enabled = false,
+	}
 })
 
 require("user.keymap")

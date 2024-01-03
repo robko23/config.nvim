@@ -20,8 +20,8 @@ return {
 
 			pcall(telescope.load_extension, 'fzf')
 
-			vim.keymap.set("n", "<leader>fF", tb.find_files, { desc = "Find in files (all)" })
-			vim.keymap.set("n", "<leader>ff", tb.git_files, { desc = "Find in files (git tracked)" })
+			vim.keymap.set("n", "<leader>ff", tb.find_files, { desc = "Find in files (all)" })
+			vim.keymap.set("n", "<leader>fF", tb.git_files, { desc = "Find in files (git tracked)" })
 			vim.keymap.set("n", "<leader>fb", tb.buffers, { desc = "Find in open buffers" })
 			vim.keymap.set("n", "<leader>fm", tb.marks, { desc = "Find in marks" })
 			vim.keymap.set("n", "<leader>fg", tb.live_grep, { desc = "Grep in git files" })
