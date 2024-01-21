@@ -53,3 +53,5 @@ vim.opt.scrolloff = 8
 
 -- https://vonheikemen.github.io/devlog/tools/using-netrw-vim-builtin-file-explorer/
 vim.cmd("let g:netrw_keepdir = 0")
+
+vim.opt.foldmethod = "marker"

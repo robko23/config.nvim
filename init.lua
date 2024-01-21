@@ -23,7 +23,9 @@ require("lazy").setup({
 	{ import = "user.plugins.telescope" },
 	{ import = "user.plugins.lspconfig" },
 	{ import = "user.plugins.flash" },
-	{ import = "user.plugins.gitsigns" }
+	{ import = "user.plugins.gitsigns" },
+	{ import = "user.plugins.aerial" },
+	-- { import = "user.plugins.tabnine" }
 }, {
 	change_detection = {
 		enabled = false,
