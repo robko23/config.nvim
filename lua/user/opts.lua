@@ -31,7 +31,6 @@ vim.o.timeoutlen = 300
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect,preview'
 
--- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
 
 vim.opt.tabstop = 4
@@ -54,4 +53,6 @@ vim.opt.scrolloff = 8
 -- https://vonheikemen.github.io/devlog/tools/using-netrw-vim-builtin-file-explorer/
 vim.cmd("let g:netrw_keepdir = 0")
 
-vim.opt.foldmethod = "marker"
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldlevel = 99
