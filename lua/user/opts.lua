@@ -56,3 +56,17 @@ vim.cmd("let g:netrw_keepdir = 0")
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldlevel = 99
+
+
+local yaml_settings_grp = vim.api.nvim_create_augroup("yaml_settings", { clear = true })
+vim.api.nvim_create_autocmd(
+	{ "BufEnter" },
+	{
+		pattern = { "*.yml", "*.yaml" },
+		group = yaml_settings_grp,
+		callback = function()
+			vim.bo.shiftwidth = 4
+			vim.bo.expandtab = true
+		end
+	}
+)
