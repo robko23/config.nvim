@@ -60,6 +60,7 @@ local on_attach = function(_, bufnr)
 	nmap('K', hover_action, 'Hover Documentation')
 	nmap('<C-q>', hover_action, 'Hover Documentation')
 	nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+	map("i", "<C-k>", vim.lsp.buf.signature_help)
 
 	-- Lesser used LSP functionality
 	nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')

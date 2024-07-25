@@ -1,12 +1,7 @@
 vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, { desc = "Undo tree" })
 
-vim.keymap.set("n", "<leader>dd", function()
-	require("trouble").open()
-end, { desc = "[D]iagnostics in [d]ocument" })
-
-vim.keymap.set("n", "<leader>dw", function()
-	require("trouble").open("workspace_diagnostics")
-end, { desc = "[D]iagnostics in [w]orkspace" })
+vim.keymap.set("n", "<leader>de", "<cmd>Trouble diagnostics filter.severity = vim.diagnostic.severity.ERROR<cr>", { desc = "[D]iagnostics - [E]rrors" })
+vim.keymap.set("n", "<leader>dd", "<cmd>Trouble diagnostics<cr>", { desc = "[D]iagnostics (all)" })
 
 vim.keymap.set({ "n", "x", "o" }, "s", function()
 	require("flash").jump()
