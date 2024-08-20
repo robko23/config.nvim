@@ -6,14 +6,14 @@ return {
 			require("which-key").setup(opts)
 
 			local wk = require("which-key")
-			wk.register({
-				['<leader>f'] = { '[F]ind ...' },
-				['<leader>c'] = { '[C]ode ...' },
-				['<leader>d'] = { '[D]iagnostic ...' },
-				['<leader>t'] = { '[T]odo ...' },
-				['<leader>g'] = { '[G]it ...' },
-				['<leader>o'] = { '[O]utline ...' },
-			}, { mode = 'n' })
+			wk.add({
+				{ "<leader>f", desc = '[F]ind ...',       mode = "n" },
+				{ '<leader>c', desc = '[C]ode ...',       mode = "n" },
+				{ '<leader>d', desc = '[D]iagnostic ...', mode = "n" },
+				{ '<leader>t', desc = '[T]odo ...',       mode = "n" },
+				{ '<leader>g', desc = '[G]it ...',        mode = "n" },
+				{ '<leader>o', desc = '[O]utline ...',    mode = "n" },
+			})
 		end
 	},
 
