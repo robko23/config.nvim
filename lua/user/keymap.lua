@@ -1,3 +1,16 @@
+-- Technically this isn't a keymap, but command abbr
+vim.cmd("cnoreabbrev W! w!")
+vim.cmd("cnoreabbrev Q! q!")
+vim.cmd("cnoreabbrev Qall! qall!")
+vim.cmd("cnoreabbrev Wq wq")
+vim.cmd("cnoreabbrev Wa wa")
+vim.cmd("cnoreabbrev wQ wq")
+vim.cmd("cnoreabbrev WQ wq")
+vim.cmd("cnoreabbrev W w")
+vim.cmd("cnoreabbrev Q q")
+vim.cmd("cnoreabbrev Qa qa")
+vim.cmd("cnoreabbrev Qall qall")
+
 vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, { desc = "Undo tree" })
 
 vim.keymap.set("n", "<leader>de", "<cmd>Trouble diagnostics filter.severity = vim.diagnostic.severity.ERROR<cr>",
@@ -7,6 +20,10 @@ vim.keymap.set("n", "<leader>dd", "<cmd>Trouble diagnostics<cr>", { desc = "[D]i
 vim.keymap.set({ "n", "x", "o" }, "s", function()
 	require("flash").jump()
 end, { desc = "Flash" })
+
+-- Vmap for maintain Visual Mode after shifting > and <
+vim.keymap.set("v", "<", "<gv")
+vim.keymap.set("v", ">", ">gv")
 
 
 vim.keymap.set("n", "j", "jzz", { remap = true })
