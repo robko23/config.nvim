@@ -44,7 +44,7 @@ return {
 
 	{
 		"nvim-treesitter/nvim-treesitter-context",
-		config = {
+		opts = {
 			max_lines = 5,
 			multiline_threshold = 5,
 			trim_scope = "outer"
