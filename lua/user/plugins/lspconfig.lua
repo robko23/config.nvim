@@ -90,8 +90,29 @@ local setup_lsp = function()
 	--
 	--  If you want to override the default filetypes that your language server will attach to you can
 	--  define the property 'filetypes' to the map in question.
+
+	-- TODO: esp-idf clangd
+	-- local function exists(filename)
+	--   local stat = vim.loop.fs_stat(filename)
+	--   return (stat and stat.type) or false
+	-- end
+	-- local function get_clangd_cmd()
+	-- 	-- Check for ESP-IDF specific files to identify the project type
+	-- 	if exists('idf.py') or exists('CMakeLists.txt') then
+	-- 		-- Path to esp-clangd
+	-- 		return { '/home/username/.espressif/tools/esp-clang/<version>/bin/clangd' }
+	-- 	else
+	-- 		-- Fallback to the default clangd
+	-- 		return { 'clangd' }
+	-- 	end
+	-- end
+
 	local servers = {
-		-- clangd = {},
+		-- TODO
+		-- clangd = {
+		-- 	cmd = get_clangd_cmd(),
+		-- 	filetypes = { "c", "cpp" }
+		-- },
 		-- gopls = {},
 		-- pyright = {},
 		rust_analyzer = {
@@ -171,6 +192,18 @@ local setup_lsp = function()
 	local mason_lspconfig = require 'mason-lspconfig'
 
 	mason_lspconfig.setup({
+		ensure_installed = {
+			"rust_analyzer@2024-10-14",
+			"lua_ls",
+			"jsonls",
+			"html",
+			"dockerls",
+			"docker_compose_language_service",
+			"yamlls",
+			"clangd",
+			"gopls",
+		},
+		automatic_installation = false
 	})
 
 	mason_lspconfig.setup_handlers({
