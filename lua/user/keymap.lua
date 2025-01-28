@@ -26,8 +26,8 @@ vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
 
 
-vim.keymap.set("n", "j", "jzz", { remap = true })
-vim.keymap.set("n", "k", "kzz", { remap = true })
+vim.keymap.set("n", "j", "jzz", { remap = false })
+vim.keymap.set("n", "k", "kzz", { remap = false })
 vim.keymap.set("n", "G", "Gzz", { remap = true })
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
