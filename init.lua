@@ -25,6 +25,7 @@ require("lazy").setup({
 	{ import = "user.plugins.flash" },
 	{ import = "user.plugins.gitsigns" },
 	{ import = "user.plugins.aerial" },
+	{ import = "user.plugins.pest" },
 }, {
 	change_detection = {
 		enabled = false,
