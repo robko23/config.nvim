@@ -80,7 +80,6 @@ local setup_lsp = function()
 	-- mason-lspconfig requires that these setup functions are called in this order
 	-- before setting up the servers.
 	require('mason').setup()
-	require('mason-lspconfig').setup()
 
 	-- Enable the following language servers
 	--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -178,10 +177,15 @@ local setup_lsp = function()
 		},
 		dockerls = {},
 		docker_compose_language_service = {},
+		postgres_lsp = {
+			cmd = { 'postgrestools', 'lsp-proxy' },
+			filetypes = {
+				'sql',
+			},
+			root_dir = vim.fs.root(0, { 'postgrestools.jsonc' }),
+			single_file_support = true,
+		},
 	}
-
-	-- Setup neovim lua configuration
-	require('neodev').setup()
 
 
 	-- nvim-cmp supports additional completion capabilities, so broadcast that to servers
@@ -203,30 +207,33 @@ local setup_lsp = function()
 			"clangd",
 			"gopls",
 		},
-		automatic_installation = false
+		automatic_enable = true
 	})
 
-	mason_lspconfig.setup_handlers({
-		function(server_name)
-			require('lspconfig')[server_name].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-				settings = servers[server_name],
-				filetypes = (servers[server_name] or {}).filetypes,
-			})
-		end,
-		-- ["rust_analyzer"] = function (_)
-		-- 	local rt = require("rust-tools")
-		-- 	rt.setup({
-		-- 	})
-		-- 	require('lspconfig')["rust_analyzer"].setup({
-		-- 		capabilities = capabilities,
-		-- 		on_attach = on_attach,
-		-- 		settings = servers["rust_analyzer"],
-		-- 		filetypes = (servers["ust_analyze"] or {}).filetypes,
-		-- 	})
-		-- end
-	})
+	-- mason_lspconfig.setup_handlers({
+	-- 	function(server_name)
+	-- 		require('lspconfig')[server_name].setup({
+	-- 			capabilities = capabilities,
+	-- 			on_attach = on_attach,
+	-- 			settings = servers[server_name],
+	-- 			filetypes = (servers[server_name] or {}).filetypes,
+	-- 		})
+	-- 	end,
+	-- 	-- ["rust_analyzer"] = function (_)
+	-- 	-- 	local rt = require("rust-tools")
+	-- 	-- 	rt.setup({
+	-- 	-- 	})
+	-- 	-- 	require('lspconfig')["rust_analyzer"].setup({
+	-- 	-- 		capabilities = capabilities,
+	-- 	-- 		on_attach = on_attach,
+	-- 	-- 		settings = servers["rust_analyzer"],
+	-- 	-- 		filetypes = (servers["ust_analyze"] or {}).filetypes,
+	-- 	-- 	})
+	-- 	-- end
+	-- })
+
+	-- Setup neovim lua configuration
+	require('neodev').setup()
 end
 
 local setup_cmp = function()

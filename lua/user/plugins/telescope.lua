@@ -4,6 +4,7 @@ return {
 		branch = '0.1.x',
 		dependencies = {
 			'nvim-lua/plenary.nvim',
+			'folke/trouble.nvim',
 			-- Fuzzy Finder Algorithm which requires local dependencies to be built.
 			-- Only load if `make` is available. Make sure you have the system
 			-- requirements installed.
@@ -35,6 +36,7 @@ return {
 						end
 
 						map('n', 'd', delete_buf)
+
 						return true
 					end
 					-- attach_mappings = function(prompt_bufnr, map)
@@ -106,5 +108,20 @@ return {
 		config = function(self, opts)
 			require("telescope").load_extension("file_browser")
 		end
-	}
+	},
+
+	{
+		"folke/trouble.nvim",
+		dependencies = {
+			"nvim-tree/nvim-web-devicons",
+		},
+		lazy = true,
+		tag = "v3.4.2",
+		event = "BufRead",
+		opts = {
+			-- your configuration comes here
+			-- or leave it empty to use the default settings
+			-- refer to the configuration section below
+		},
+	},
 }

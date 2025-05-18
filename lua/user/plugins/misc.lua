@@ -71,10 +71,11 @@ return {
 		},
 		config = function(self, opts)
 			require("todo-comments").setup(opts)
+			local trouble = require('trouble.')
 
 			vim.keymap.set('n', "<leader>tt", function()
-				vim.cmd("TodoTelescope")
-			end, { desc = "[T]odo [T]elescope" })
+				vim.cmd("Trouble todo")
+			end, { desc = "[T]odo [T]rouble" })
 		end
 	},
 

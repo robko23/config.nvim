@@ -18,7 +18,6 @@ require("lazy").setup({
 	{ import = "user.plugins.colorscheme" },
 	{ import = "user.plugins.misc" },
 	{ import = "user.plugins.lualine" },
-	{ import = "user.plugins.trouble" },
 	{ import = "user.plugins.treesitter" },
 	{ import = "user.plugins.telescope" },
 	{ import = "user.plugins.lspconfig" },
