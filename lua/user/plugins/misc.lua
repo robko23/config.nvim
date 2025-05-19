@@ -13,6 +13,7 @@ return {
 				{ '<leader>t', desc = '[T]odo ...',       mode = "n" },
 				{ '<leader>g', desc = '[G]it ...',        mode = "n" },
 				{ '<leader>o', desc = '[O]utline ...',    mode = "n" },
+				{ '<leader>r', desc = '[R]ust ...',       mode = "n" },
 			})
 		end
 	},

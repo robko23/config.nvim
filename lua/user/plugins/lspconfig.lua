@@ -1,16 +1,16 @@
--- [[ Configure LSP ]]
---  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
+--- Callback when LSP client is attached
+---@param client vim.lsp.Client
+---@param bufnr integer
+local on_attach = function(client, bufnr)
 	local diag = function(next)
 		local get = next and vim.diagnostic.get_next or vim.diagnostic.get_prev
-		local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
 		return function()
 			-- jumps to the most severe diagnostic in current buffer
 			local jumped = false
 			for i = 1, 4, 1 do
 				local d = get({ severity = i })
 				if type(d) == "table" then
-					go({ severity = i })
+					vim.diagnostic.jump({ diagnostic = d })
 					jumped = true
 					break
 				end
@@ -21,6 +21,11 @@ local on_attach = function(_, bufnr)
 		end
 	end
 
+	---Map key to current buffer
+	---@param mode string|string[]
+	---@param keys string
+	---@param func function
+	---@param desc string
 	local map = function(mode, keys, func, desc)
 		if desc then
 			desc = 'LSP: ' .. desc
@@ -31,6 +36,7 @@ local on_attach = function(_, bufnr)
 	local nmap = function(keys, func, desc)
 		map('n', keys, func, desc)
 	end
+
 
 	nmap("]d", diag(true), "Next diagnostic")
 	nmap("[d", diag(false), "Prev diagnostic")
@@ -60,15 +66,29 @@ local on_attach = function(_, bufnr)
 	nmap('K', hover_action, 'Hover Documentation')
 	nmap('<C-q>', hover_action, 'Hover Documentation')
 	nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
-	map("i", "<C-k>", vim.lsp.buf.signature_help)
+	map("i", "<C-k>", vim.lsp.buf.signature_help, "Signature help")
+
+
+	if client.name == "rust-analyzer" then
+		map("n", "K", function()
+			vim.cmd.RustLsp({ 'hover', 'actions' })
+		end, "Hover Actions (Rust)")
+
+		map("n", "<leader>re", function()
+			vim.cmd.RustLsp("expandMacro")
+		end, "[E]xpand macro")
+
+		map("n", "<leader>rd", function()
+			vim.cmd.RustLsp("renderDiagnostic")
+		end, "Render [D]iagnostic")
+
+		map("n", "=", function()
+			vim.cmd("RustFmt")
+		end, "Render [D]iagnostic")
+	end
 
 	-- Lesser used LSP functionality
 	nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-	-- nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-	-- nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-	-- nmap('<leader>wl', function()
-	-- 	print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-	-- end, '[W]orkspace [L]ist Folders')
 
 	-- Create a command `:Format` local to the LSP buffer
 	vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
@@ -80,15 +100,6 @@ local setup_lsp = function()
 	-- mason-lspconfig requires that these setup functions are called in this order
 	-- before setting up the servers.
 	require('mason').setup()
-
-	-- Enable the following language servers
-	--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-	--
-	--  Add any additional override configuration in the following tables. They will be passed to
-	--  the `settings` field of the server config. You must look up that documentation yourself.
-	--
-	--  If you want to override the default filetypes that your language server will attach to you can
-	--  define the property 'filetypes' to the map in question.
 
 	-- TODO: esp-idf clangd
 	-- local function exists(filename)
@@ -107,47 +118,6 @@ local setup_lsp = function()
 	-- end
 
 	local servers = {
-		-- TODO
-		-- clangd = {
-		-- 	cmd = get_clangd_cmd(),
-		-- 	filetypes = { "c", "cpp" }
-		-- },
-		-- gopls = {},
-		-- pyright = {},
-		rust_analyzer = {
-			keys = {
-				{ "K",          "<cmd>RustHoverActions<cr>", desc = "Hover Actions (Rust)" },
-				{ "<leader>cR", "<cmd>RustCodeAction<cr>",   desc = "Code Action (Rust)" },
-				{ "<leader>dr", "<cmd>RustDebuggables<cr>",  desc = "Run Debuggables (Rust)" },
-			},
-			settings = {
-				["rust-analyzer"] = {
-					cargo = {
-						allFeatures = true,
-						loadOutDirsFromCheck = true,
-						runBuildScripts = true,
-					},
-					-- Add clippy lints for Rust.
-					checkOnSave = {
-						allFeatures = true,
-						command = "check",
-						extraArgs = { "--no-deps" },
-					},
-					procMacro = {
-						enable = true,
-						ignored = {
-							["async-trait"] = { "async_trait" },
-							["napi-derive"] = { "napi" },
-							["async-recursion"] = { "async_recursion" },
-						},
-					},
-				},
-			},
-
-		},
-		-- tsserver = {},
-		-- html = { filetypes = { 'html', 'twig', 'hbs'} },
-
 		lua_ls = {
 			Lua = {
 				workspace = { checkThirdParty = false },
@@ -185,8 +155,33 @@ local setup_lsp = function()
 			root_dir = vim.fs.root(0, { 'postgrestools.jsonc' }),
 			single_file_support = true,
 		},
+		["rust-analyzer"] = {
+			settings = {
+				["rust-analyzer"] = {
+					cargo = {
+						allFeatures = true,
+						loadOutDirsFromCheck = true,
+						runBuildScripts = true,
+						-- noDeps = true
+					},
+					-- Add clippy lints for Rust.
+					checkOnSave = true,
+					check = {
+						command = "check",
+						-- extraArgs = { "--no-deps" }
+					},
+					procMacro = {
+						enable = true,
+						ignored = {
+							["async-trait"] = { "async_trait" },
+							["napi-derive"] = { "napi" },
+							["async-recursion"] = { "async_recursion" },
+						},
+					},
+				}
+			}
+		}
 	}
-
 
 	-- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 	local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -197,7 +192,7 @@ local setup_lsp = function()
 
 	mason_lspconfig.setup({
 		ensure_installed = {
-			"rust_analyzer@2024-10-14",
+			"rust_analyzer",
 			"lua_ls",
 			"jsonls",
 			"html",
@@ -207,33 +202,31 @@ local setup_lsp = function()
 			"clangd",
 			"gopls",
 		},
-		automatic_enable = true
+		automatic_enable = {
+			exclude = {
+				"rust_analyzer" -- do not set up rust_analyzer from lspconfig - rustaceanvim would conflict
+			}
+		}
 	})
 
-	-- mason_lspconfig.setup_handlers({
-	-- 	function(server_name)
-	-- 		require('lspconfig')[server_name].setup({
-	-- 			capabilities = capabilities,
-	-- 			on_attach = on_attach,
-	-- 			settings = servers[server_name],
-	-- 			filetypes = (servers[server_name] or {}).filetypes,
-	-- 		})
-	-- 	end,
-	-- 	-- ["rust_analyzer"] = function (_)
-	-- 	-- 	local rt = require("rust-tools")
-	-- 	-- 	rt.setup({
-	-- 	-- 	})
-	-- 	-- 	require('lspconfig')["rust_analyzer"].setup({
-	-- 	-- 		capabilities = capabilities,
-	-- 	-- 		on_attach = on_attach,
-	-- 	-- 		settings = servers["rust_analyzer"],
-	-- 	-- 		filetypes = (servers["ust_analyze"] or {}).filetypes,
-	-- 	-- 	})
-	-- 	-- end
-	-- })
+	vim.lsp.config("*", {
+		on_attach = on_attach,
+		capabilities = capabilities,
+	})
 
-	-- Setup neovim lua configuration
-	require('neodev').setup()
+	vim.lsp.config("rust_analyzer", {
+		on_attach = function()
+			error("bruh")
+		end
+	})
+
+	vim.diagnostic.config({
+		virtual_text = true,
+	})
+
+	for key, value in pairs(servers) do
+		vim.lsp.config(key, value)
+	end
 end
 
 local setup_cmp = function()
@@ -261,7 +254,7 @@ local setup_cmp = function()
 			['<C-f>'] = cmp.mapping.scroll_docs(4),
 			['<C-Space>'] = cmp.mapping.complete {},
 			['<CR>'] = cmp.mapping.confirm {
-				behavior = cmp.ConfirmBehavior.Replace,
+				behavior = cmp.ConfirmBehavior.Insert,
 				select = true,
 			},
 			['<Tab>'] = cmp.mapping(function(fallback)
@@ -306,11 +299,22 @@ return {
 			-- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
 			{ 'j-hui/fidget.nvim',       opts = {} },
 
-			-- Additional lua configuration, makes nvim stuff amazing!
-			'folke/neodev.nvim',
 		},
 		config = setup_lsp,
 	},
+
+	{
+		"folke/lazydev.nvim",
+		ft = "lua", -- only load on lua files
+		opts = {
+			library = {
+				-- See the configuration section for more details
+				-- Load luvit types when the `vim.uv` word is found
+				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+			},
+		},
+	},
+
 
 	{
 		-- Autocompletion
@@ -329,5 +333,11 @@ return {
 
 		},
 		config = setup_cmp,
+	},
+
+	{
+		'mrcjkb/rustaceanvim',
+		version = '^6',
+		lazy = false,
 	}
 }
